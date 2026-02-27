@@ -1,29 +1,51 @@
-// Service worker: captures response headers for all tabs and stores them in
-// chrome.storage.session, keyed by tabId. Keeps the last MAX_REQUESTS requests
-// per tab (newest first) so the popup can search across page loads and API calls.
+// Service worker: captures both request and response headers for all tabs and
+// stores them in chrome.storage.session, keyed by tabId. Keeps the last
+// MAX_ENTRIES entries per tab (newest first) so the popup can search across
+// page loads and XHR/fetch API calls.
+//
+// Request headers (e.g. Authorization, X-Org-Id) are captured via onSendHeaders.
+// Response headers are captured via onCompleted. Each fires a separate store
+// entry so that neither depends on the other surviving a service-worker restart.
 
-const MAX_REQUESTS_PER_TAB = 50;
+const MAX_ENTRIES_PER_TAB = 100;
 
+function storeHeaders(tabId, url, headers) {
+  if (tabId < 0 || !headers.length) return;
+  const key = `tab_${tabId}`;
+  chrome.storage.session.get(key, (result) => {
+    const entries = result[key] || [];
+    entries.unshift({ url, headers }); // newest first
+    if (entries.length > MAX_ENTRIES_PER_TAB) {
+      entries.length = MAX_ENTRIES_PER_TAB;
+    }
+    chrome.storage.session.set({ [key]: entries });
+  });
+}
+
+// Capture request headers (Authorization, X-Org-Id, etc. sent by the page).
+// extraHeaders is required for Authorization – Chrome normally hides it.
+chrome.webRequest.onSendHeaders.addListener(
+  (details) => {
+    if (!details.requestHeaders || details.tabId < 0) return;
+    const headers = details.requestHeaders.map((h) => ({
+      name: h.name.toLowerCase(),
+      value: h.value || '',
+    }));
+    storeHeaders(details.tabId, details.url, headers);
+  },
+  { urls: ['<all_urls>'] },
+  ['requestHeaders', 'extraHeaders']
+);
+
+// Capture response headers as well (in case a button targets a response header).
 chrome.webRequest.onCompleted.addListener(
   (details) => {
-    // Ignore requests not tied to a real tab (tabId -1 = background/extension requests)
     if (!details.responseHeaders || details.tabId < 0) return;
-
     const headers = details.responseHeaders.map((h) => ({
       name: h.name.toLowerCase(),
       value: h.value || '',
     }));
-
-    const key = `tab_${details.tabId}`;
-
-    chrome.storage.session.get(key, (result) => {
-      const requests = result[key] || [];
-      requests.unshift({ url: details.url, headers }); // newest first
-      if (requests.length > MAX_REQUESTS_PER_TAB) {
-        requests.length = MAX_REQUESTS_PER_TAB;
-      }
-      chrome.storage.session.set({ [key]: requests });
-    });
+    storeHeaders(details.tabId, details.url, headers);
   },
   { urls: ['<all_urls>'] },
   ['responseHeaders', 'extraHeaders']
