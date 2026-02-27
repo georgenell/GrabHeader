@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>GrabHeader – Options</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      color: #222;
+      max-width: 760px;
+      margin: 36px auto;
+      padding: 0 24px 48px;
+    }
+
+    h1 { font-size: 22px; color: #1e4cb4; margin-bottom: 6px; }
+    .subtitle { color: #666; margin-bottom: 24px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 8px 8px 10px;
+      border-bottom: 2px solid #ddd;
+      font-weight: 600;
+      font-size: 13px;
+      color: #555;
+    }
+
+    tbody td { padding: 6px 8px; vertical-align: middle; }
+
+    tbody tr:hover td { background: #f9fafc; }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #1e4cb4;
+      box-shadow: 0 0 0 2px rgba(30,76,180,0.15);
+    }
+
+    .col-name   { width: 20%; }
+    .col-header { width: 24%; }
+    .col-regex  { width: 46%; }
+    .col-del    { width: 10%; text-align: center; }
+
+    .btn-delete {
+      background: none;
+      border: 1px solid #dc3545;
+      color: #dc3545;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-delete:hover { background: #dc3545; color: #fff; }
+
+    .hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    .hint code {
+      background: #f0f0f0;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-add {
+      background: #1e4cb4;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-add:hover { background: #163a92; }
+
+    .btn-save {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-save:hover { background: #1e7e34; }
+
+    .status {
+      font-size: 13px;
+      color: #28a745;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>GrabHeader</h1>
+  <p class="subtitle">Configure the buttons shown in the popup. Each button grabs a response header and copies it to your clipboard.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="col-name">Button Name</th>
+        <th class="col-header">Header Name</th>
+        <th class="col-regex">Regex Filter <small style="font-weight:normal">(optional)</small></th>
+        <th class="col-del"></th>
+      </tr>
+    </thead>
+    <tbody id="config-rows"></tbody>
+  </table>
+
+  <p class="hint">
+    <strong>Regex:</strong> applied to the raw header value before copying.
+    If the pattern contains a capture group, group&nbsp;1 is used; otherwise the full match.
+    Example: <code>^Bearer\s+(.+)$</code> strips the "Bearer&nbsp;" prefix from an Authorization header, leaving just the token.
+  </p>
+
+  <div class="actions">
+    <button class="btn-add" id="btn-add">+ Add Button</button>
+    <button class="btn-save" id="btn-save">Save</button>
+    <span class="status" id="status">✓ Saved!</span>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

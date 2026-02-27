@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-width: 230px;
+      padding: 14px;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      color: #222;
+      background: #fff;
+    }
+
+    h2 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #1e4cb4;
+    }
+
+    #buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    button.grab-btn {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: left;
+      background: #f5f7fa;
+      font-size: 14px;
+      color: #222;
+      transition: background 0.1s, border-color 0.1s;
+    }
+
+    button.grab-btn:hover { background: #e8ecf4; border-color: #aab; }
+    button.grab-btn.copied  { background: #d4edda; border-color: #28a745; color: #155724; }
+    button.grab-btn.missing { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+    .empty-msg { color: #888; font-size: 13px; }
+    .empty-msg a { color: #1e4cb4; }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #aaa;
+      text-align: right;
+    }
+    .footer a { color: #aaa; text-decoration: none; }
+    .footer a:hover { color: #1e4cb4; }
+  </style>
+</head>
+<body>
+  <h2>GrabHeader</h2>
+  <div id="buttons"></div>
+  <div class="footer"><a href="#" id="options-link">⚙ Options</a></div>
+  <script src="popup.js"></script>
+</body>
+</html>
