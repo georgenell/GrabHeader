@@ -6,61 +6,100 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      min-width: 230px;
-      padding: 14px;
-      font-family: system-ui, -apple-system, sans-serif;
-      font-size: 14px;
-      color: #222;
-      background: #fff;
+    :root {
+      --bg:          #ffffff;
+      --surface:     #f5f7fa;
+      --surface-hover: #e8ecf4;
+      --border:      #d0d5dd;
+      --text:        #1a1a1a;
+      --text-muted:  #888;
+      --accent:      #1e4cb4;
+      --success-bg:  #d4edda; --success-border: #28a745; --success-text: #155724;
+      --error-bg:    #f8d7da; --error-border:   #dc3545; --error-text:   #721c24;
+      --title-color: #666;
+      --divider:     #e4e7ec;
     }
 
-    h2 {
-      font-size: 15px;
-      font-weight: 600;
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #1e1e1e;
+        --surface:     #2a2a2a;
+        --surface-hover: #333;
+        --border:      #444;
+        --text:        #e8e8e8;
+        --text-muted:  #888;
+        --accent:      #6b9eff;
+        --success-bg:  #1a3d24; --success-border: #2ea84c; --success-text: #7dd99a;
+        --error-bg:    #3d1a1a; --error-border:   #c0392b; --error-text:   #f4a0a0;
+        --title-color: #555;
+        --divider:     #2f2f2f;
+      }
+    }
+
+    body {
+      min-width: 240px;
+      padding: 14px 14px 12px;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--bg);
+      border-radius: 10px;
+    }
+
+    header {
+      text-align: center;
+      padding-bottom: 10px;
       margin-bottom: 12px;
-      color: #1e4cb4;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    header h2 {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--title-color);
     }
 
     #buttons {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
 
     button.grab-btn {
       display: block;
       width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       cursor: pointer;
       text-align: left;
-      background: #f5f7fa;
+      background: var(--surface);
       font-size: 14px;
-      color: #222;
-      transition: background 0.1s, border-color 0.1s;
+      color: var(--text);
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
     }
 
-    button.grab-btn:hover { background: #e8ecf4; border-color: #aab; }
-    button.grab-btn.copied  { background: #d4edda; border-color: #28a745; color: #155724; }
-    button.grab-btn.missing { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+    button.grab-btn:hover  { background: var(--surface-hover); border-color: var(--accent); }
+    button.grab-btn.copied { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); }
+    button.grab-btn.missing{ background: var(--error-bg);   border-color: var(--error-border);   color: var(--error-text);   }
 
-    .empty-msg { color: #888; font-size: 13px; }
-    .empty-msg a { color: #1e4cb4; }
+    .empty-msg { color: var(--text-muted); font-size: 13px; }
+    .empty-msg a { color: var(--accent); }
 
     .footer {
-      margin-top: 14px;
-      font-size: 12px;
-      color: #aaa;
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--text-muted);
       text-align: right;
     }
-    .footer a { color: #aaa; text-decoration: none; }
-    .footer a:hover { color: #1e4cb4; }
+    .footer a { color: var(--text-muted); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
   </style>
 </head>
 <body>
-  <h2>GrabHeader</h2>
+  <header><h2>GrabHeader</h2></header>
   <div id="buttons"></div>
   <div class="footer"><a href="#" id="options-link">⚙ Options</a></div>
   <script src="popup.js"></script>

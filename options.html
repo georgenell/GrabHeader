@@ -6,48 +6,111 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg:            #f7f8fa;
+      --card:          #ffffff;
+      --border:        #d0d5dd;
+      --border-subtle: #e4e7ec;
+      --text:          #1a1a1a;
+      --text-muted:    #777;
+      --accent:        #1e4cb4;
+      --accent-hover:  #163a92;
+      --row-hover:     #f4f6fb;
+      --input-focus-shadow: rgba(30,76,180,0.15);
+      --danger:        #dc3545;
+      --danger-hover:  #a71d2a;
+      --success:       #28a745;
+      --success-hover: #1e7e34;
+      --success-text:  #28a745;
+      --code-bg:       #f0f0f0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:            #161616;
+        --card:          #1e1e1e;
+        --border:        #3a3a3a;
+        --border-subtle: #2a2a2a;
+        --text:          #e8e8e8;
+        --text-muted:    #888;
+        --accent:        #6b9eff;
+        --accent-hover:  #4d7de8;
+        --row-hover:     #252525;
+        --input-focus-shadow: rgba(107,158,255,0.2);
+        --danger:        #e05260;
+        --danger-hover:  #b33040;
+        --success:       #2ea84c;
+        --success-hover: #237a38;
+        --success-text:  #7dd99a;
+        --code-bg:       #2a2a2a;
+      }
+    }
+
     body {
       font-family: system-ui, -apple-system, sans-serif;
       font-size: 14px;
-      color: #222;
+      color: var(--text);
+      background: var(--bg);
       max-width: 760px;
       margin: 36px auto;
       padding: 0 24px 48px;
     }
 
-    h1 { font-size: 22px; color: #1e4cb4; margin-bottom: 6px; }
-    .subtitle { color: #666; margin-bottom: 24px; }
+    header {
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    h1 {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .subtitle { color: var(--text-muted); font-size: 13px; }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      overflow: hidden;
     }
 
     thead th {
       text-align: left;
-      padding: 8px 8px 10px;
-      border-bottom: 2px solid #ddd;
+      padding: 10px 10px 11px;
+      border-bottom: 1px solid var(--border-subtle);
       font-weight: 600;
-      font-size: 13px;
-      color: #555;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--bg);
     }
 
-    tbody td { padding: 6px 8px; vertical-align: middle; }
-
-    tbody tr:hover td { background: #f9fafc; }
+    tbody td { padding: 7px 8px; vertical-align: middle; }
+    tbody tr:hover td { background: var(--row-hover); }
 
     input[type="text"] {
       width: 100%;
-      padding: 6px 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      padding: 6px 9px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
       font-size: 13px;
       font-family: inherit;
+      background: var(--card);
+      color: var(--text);
     }
     input[type="text"]:focus {
       outline: none;
-      border-color: #1e4cb4;
-      box-shadow: 0 0 0 2px rgba(30,76,180,0.15);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--input-focus-shadow);
     }
 
     .col-name   { width: 20%; }
@@ -57,25 +120,26 @@
 
     .btn-delete {
       background: none;
-      border: 1px solid #dc3545;
-      color: #dc3545;
+      border: 1px solid var(--danger);
+      color: var(--danger);
       padding: 4px 10px;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 13px;
     }
-    .btn-delete:hover { background: #dc3545; color: #fff; }
+    .btn-delete:hover { background: var(--danger); color: #fff; border-color: var(--danger-hover); }
 
     .hint {
       font-size: 12px;
-      color: #888;
+      color: var(--text-muted);
       margin-top: 10px;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     .hint code {
-      background: #f0f0f0;
-      padding: 1px 4px;
-      border-radius: 3px;
+      background: var(--code-bg);
+      color: var(--text);
+      padding: 1px 5px;
+      border-radius: 4px;
       font-size: 11px;
     }
 
@@ -87,37 +151,39 @@
     }
 
     .btn-add {
-      background: #1e4cb4;
+      background: var(--accent);
       color: #fff;
       border: none;
       padding: 8px 16px;
-      border-radius: 4px;
+      border-radius: 7px;
       cursor: pointer;
       font-size: 14px;
     }
-    .btn-add:hover { background: #163a92; }
+    .btn-add:hover { background: var(--accent-hover); }
 
     .btn-save {
-      background: #28a745;
+      background: var(--success);
       color: #fff;
       border: none;
       padding: 8px 16px;
-      border-radius: 4px;
+      border-radius: 7px;
       cursor: pointer;
       font-size: 14px;
     }
-    .btn-save:hover { background: #1e7e34; }
+    .btn-save:hover { background: var(--success-hover); }
 
     .status {
       font-size: 13px;
-      color: #28a745;
+      color: var(--success-text);
       display: none;
     }
   </style>
 </head>
 <body>
-  <h1>GrabHeader</h1>
-  <p class="subtitle">Configure the buttons shown in the popup. Each button grabs a response header and copies it to your clipboard.</p>
+  <header>
+    <h1>GrabHeader</h1>
+    <p class="subtitle">Configure the buttons shown in the popup. Each button grabs a header from recent requests and copies it to your clipboard.</p>
+  </header>
 
   <table>
     <thead>
