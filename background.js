@@ -1,24 +1,42 @@
-// Service worker: captures both request and response headers for all tabs and
-// stores them in chrome.storage.session, keyed by tabId. Keeps the last
-// MAX_ENTRIES entries per tab (newest first) so the popup can search across
-// page loads and XHR/fetch API calls.
-//
-// Request headers (e.g. Authorization, X-Org-Id) are captured via onSendHeaders.
-// Response headers are captured via onCompleted. Each fires a separate store
-// entry so that neither depends on the other surviving a service-worker restart.
+// Service worker: captures request and response headers only for the currently
+// active tab. All captured entries are stored under a single session key
+// ('headers') so there's no per-tab accumulation. The entry list is cleared
+// whenever the user switches to a different tab or window.
 
-const MAX_ENTRIES_PER_TAB = 100;
+const MAX_ENTRIES = 100;
+const STORAGE_KEY = 'headers';
+
+// Track which tab is currently active. Initialised at startup and kept
+// up-to-date via tab/window events below.
+let activeTabId = null;
+
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  if (tabs.length) activeTabId = tabs[0].id;
+});
+
+// Switched tab within a window → clear stored headers, track new tab.
+chrome.tabs.onActivated.addListener((info) => {
+  activeTabId = info.tabId;
+  chrome.storage.session.set({ [STORAGE_KEY]: [] });
+});
+
+// Focused a different window → clear stored headers, track that window's active tab.
+chrome.windows.onFocusChanged.addListener((windowId) => {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) return;
+  chrome.tabs.query({ active: true, windowId }, (tabs) => {
+    if (!tabs.length) return;
+    activeTabId = tabs[0].id;
+    chrome.storage.session.set({ [STORAGE_KEY]: [] });
+  });
+});
 
 function storeHeaders(tabId, url, headers) {
-  if (tabId < 0 || !headers.length) return;
-  const key = `tab_${tabId}`;
-  chrome.storage.session.get(key, (result) => {
-    const entries = result[key] || [];
+  if (tabId < 0 || tabId !== activeTabId || !headers.length) return;
+  chrome.storage.session.get(STORAGE_KEY, (result) => {
+    const entries = result[STORAGE_KEY] || [];
     entries.unshift({ url, headers }); // newest first
-    if (entries.length > MAX_ENTRIES_PER_TAB) {
-      entries.length = MAX_ENTRIES_PER_TAB;
-    }
-    chrome.storage.session.set({ [key]: entries });
+    if (entries.length > MAX_ENTRIES) entries.length = MAX_ENTRIES;
+    chrome.storage.session.set({ [STORAGE_KEY]: entries });
   });
 }
 
@@ -51,7 +69,10 @@ chrome.webRequest.onCompleted.addListener(
   ['responseHeaders', 'extraHeaders']
 );
 
-// Clean up stored headers when a tab is closed.
+// If the active tab is closed, clear the stored headers.
 chrome.tabs.onRemoved.addListener((tabId) => {
-  chrome.storage.session.remove(`tab_${tabId}`);
+  if (tabId === activeTabId) {
+    activeTabId = null;
+    chrome.storage.session.set({ [STORAGE_KEY]: [] });
+  }
 });

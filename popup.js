@@ -12,11 +12,11 @@ function getConfig() {
   });
 }
 
-/** Load captured request records for a specific tab from session storage. */
-function getRequestsForTab(tabId) {
+/** Load captured request records for the active tab from session storage. */
+function getRequestsForTab(_tabId) {
   return new Promise((resolve) => {
-    chrome.storage.session.get(`tab_${tabId}`, (result) => {
-      resolve(result[`tab_${tabId}`] || []);
+    chrome.storage.session.get('headers', (result) => {
+      resolve(result['headers'] || []);
     });
   });
 }
