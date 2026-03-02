@@ -1,8 +1,3 @@
-const DEFAULT_CONFIG = [
-  { name: 'Auth Token', header: 'Authorization', regex: '^Bearer\\s+(.+)$' },
-  { name: 'Org ID',     header: 'X-Org-Id',       regex: '' },
-];
-
 /** Load button config from sync storage, falling back to defaults. */
 function getConfig() {
   return new Promise((resolve) => {
