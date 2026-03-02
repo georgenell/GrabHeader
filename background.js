@@ -20,11 +20,24 @@ function storeHeaders(tabId, url, headers) {
   });
 }
 
-// Clear per-tab headers when the tab navigates to a new page.
-// changeInfo.url is only present on a real navigation (not XHR/fragment).
+// Track the last-known origin per tab so we can detect cross-origin navigations.
+const tabOrigins = new Map();
+
+// Clear per-tab headers only when the tab navigates to a different origin.
+// Same-origin navigation (SPA route changes, multi-page apps on the same host)
+// keeps the headers so tokens captured at initial page-load remain available.
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if (changeInfo.status === 'loading' && changeInfo.url) {
-    chrome.storage.session.remove(tabKey(tabId));
+    try {
+      const newOrigin = new URL(changeInfo.url).origin;
+      const prevOrigin = tabOrigins.get(tabId);
+      if (prevOrigin && prevOrigin !== newOrigin) {
+        chrome.storage.session.remove(tabKey(tabId));
+      }
+      tabOrigins.set(tabId, newOrigin);
+    } catch {
+      chrome.storage.session.remove(tabKey(tabId)); // unparseable URL – clear to be safe
+    }
   }
 });
 
@@ -57,7 +70,8 @@ chrome.webRequest.onCompleted.addListener(
   ['responseHeaders', 'extraHeaders']
 );
 
-// Clear per-tab headers when the tab is closed.
+// Clear per-tab headers and origin tracking when the tab is closed.
 chrome.tabs.onRemoved.addListener((tabId) => {
+  tabOrigins.delete(tabId);
   chrome.storage.session.remove(tabKey(tabId));
 });
