@@ -5,6 +5,11 @@
 
 const MAX_ENTRIES = 100;
 
+// Firefox exposes sensitive headers without extraHeaders; Chrome requires it.
+const isFirefox = typeof globalThis.browser !== 'undefined';
+const reqSpec  = isFirefox ? ['requestHeaders']  : ['requestHeaders',  'extraHeaders'];
+const respSpec = isFirefox ? ['responseHeaders'] : ['responseHeaders', 'extraHeaders'];
+
 function tabKey(tabId) {
   return `headers_${tabId}`;
 }
@@ -53,7 +58,7 @@ chrome.webRequest.onSendHeaders.addListener(
     storeHeaders(details.tabId, details.url, headers);
   },
   { urls: ['<all_urls>'] },
-  ['requestHeaders', 'extraHeaders']
+  reqSpec
 );
 
 // Capture response headers as well (in case a button targets a response header).
@@ -67,7 +72,7 @@ chrome.webRequest.onCompleted.addListener(
     storeHeaders(details.tabId, details.url, headers);
   },
   { urls: ['<all_urls>'] },
-  ['responseHeaders', 'extraHeaders']
+  respSpec
 );
 
 // Clear per-tab headers and origin tracking when the tab is closed.
