@@ -1,6 +1,6 @@
 # GrabHeader
 
-A Chromium browser extension for web developers. Click the toolbar icon to instantly copy HTTP response header values from the current page (or any recent request made by that page) to your clipboard.
+A Chromium or Firefox browser extension for web developers. Click the toolbar icon to instantly copy HTTP response header values from the current page (or any recent request made by that page) to your clipboard.
 
 ## Features
 
@@ -16,12 +16,19 @@ A Chromium browser extension for web developers. Click the toolbar icon to insta
 | Grab Auth Token | `Authorization` | `^Bearer\s+(.+)$` | Copies just the token, without the `Bearer ` prefix |
 | Grab Org ID | `X-Org-Id` | *(none)* | Copies the raw header value |
 
-## Installation (Load Unpacked)
+## Chromium Installation (Load Unpacked)
 
 1. Clone or download this repository.
 2. Open Chrome (or any Chromium browser) and go to `chrome://extensions`.
 3. Enable **Developer mode** (toggle in the top-right corner).
 4. Click **Load unpacked** and select the `GrabHeader` folder.
+5. The GrabHeader icon will appear in your toolbar.
+
+## Firefox Installation (Load Unpacked)
+
+1. Clone or download this repository.
+2. Open Firefox and go to `about:debugging`.
+3. Go to **This Firefox** | **Load Temporary Add-on** and select the `manifest.json` file.
 5. The GrabHeader icon will appear in your toolbar.
 
 > Pin the extension to your toolbar via the Extensions puzzle-piece menu for quick access.
