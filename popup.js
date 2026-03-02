@@ -8,10 +8,11 @@ function getConfig() {
 }
 
 /** Load captured request records for the active tab from session storage. */
-function getRequestsForTab(_tabId) {
+function getRequestsForTab(tabId) {
   return new Promise((resolve) => {
-    chrome.storage.session.get('headers', (result) => {
-      resolve(result['headers'] || []);
+    const key = `headers_${tabId}`;
+    chrome.storage.session.get(key, (result) => {
+      resolve(result[key] || []);
     });
   });
 }
